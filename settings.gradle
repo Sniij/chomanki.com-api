@@ -1,0 +1,6 @@
+rootProject.name = 'chomanki.com-api'
+include 'cmk-blog-api'
+include 'cmk-blog-domain'
+include 'cmk-blog-util'
+include 'cmk-auth'
+

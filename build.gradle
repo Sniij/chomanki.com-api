@@ -1,0 +1,147 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+
+allprojects {
+
+	group = 'com.sniij'
+	version = '0.0.1-SNAPSHOT'
+
+	java {
+		sourceCompatibility = '17'
+	}
+
+	repositories {
+		mavenCentral()
+	}
+}
+
+subprojects {
+	apply plugin: "org.springframework.boot"
+	apply plugin: "io.spring.dependency-management"
+	apply plugin: "java"
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+
+	dependencies {
+		annotationProcessor(
+				'org.projectlombok:lombok'
+		)
+
+		implementation (
+				'org.springframework.boot:spring-boot-starter-web',
+				'org.springframework.boot:spring-boot-starter-validation',
+				'org.springframework.boot:spring-boot-configuration-processor',
+				'org.springframework.boot:spring-boot-starter-data-mongodb',
+		)
+
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+		compileOnly (
+				'org.projectlombok:lombok'
+		)
+	}
+
+	test {
+		useJUnitPlatform()
+	}
+}
+
+project(':cmk-blog-util') {
+	bootJar {enabled = false}
+	jar {enabled = true}
+
+}
+
+project(':cmk-blog-domain') {
+
+	ext {
+		set('springCloudVersion', "2023.0.0")
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		}
+	}
+
+	bootJar {enabled = false}
+	jar {enabled = true}
+
+	dependencies {
+		implementation project(':cmk-blog-util')
+		implementation 'org.mongodb:mongodb-driver-core:4.11.1'
+	}
+}
+
+project(':cmk-auth') {
+
+	ext {
+		set('springCloudVersion', "2023.0.0")
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		}
+	}
+
+	bootJar {enabled = false}
+	jar {enabled = true}
+
+	dependencies {
+		implementation project(':cmk-blog-domain')
+		implementation project(':cmk-blog-util')
+
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+		implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.0-M2'
+		implementation  'io.jsonwebtoken:jjwt-api:0.12.3'
+
+		runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+		runtimeOnly	'io.jsonwebtoken:jjwt-jackson:0.12.3'
+	}
+}
+
+
+
+project(':cmk-blog-api') {
+	bootJar {enabled = true}
+
+	ext {
+		set('springCloudVersion', "2023.0.0")
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		}
+	}
+
+	dependencies {
+		implementation project(':cmk-auth')
+		implementation project(':cmk-blog-domain')
+		implementation project(':cmk-blog-util')
+
+		implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.0-M2'
+
+	}
+
+
+	task buildZip(type: Zip) {
+		from compileJava
+		from processResources
+		into('lib') {
+			from configurations.runtimeClasspath
+		}
+	}
+}
+
