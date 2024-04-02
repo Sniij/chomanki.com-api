@@ -2,16 +2,13 @@ package blog.sniij.api;
 
 import blog.sniij.api.dto.UserDto;
 import blog.sniij.auth.token.jwt.JwtProvider;
-import blog.sniij.auth.token.jwt.JwtTokenizer;
 import blog.sniij.domain.User;
 import blog.sniij.dto.SingleResponseDto;
-import blog.sniij.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller

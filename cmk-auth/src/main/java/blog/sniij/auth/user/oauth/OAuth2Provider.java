@@ -1,7 +1,5 @@
 package blog.sniij.auth.user.oauth;
 
-import blog.sniij.exception.BusinessLogicException;
-
 import java.util.Arrays;
 
 public enum OAuth2Provider {

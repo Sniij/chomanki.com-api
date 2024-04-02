@@ -1,7 +1,6 @@
 package blog.sniij.auth.token.jwt;
 
 import blog.sniij.auth.user.oauth.CustomOAuth2User;
-import blog.sniij.auth.user.oauth.UserPrincipal;
 import blog.sniij.domain.User;
 import blog.sniij.service.UserService;
 import io.jsonwebtoken.Claims;
